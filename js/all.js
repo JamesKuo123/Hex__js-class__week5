@@ -5,6 +5,12 @@ new Vue({
     data: {
         products: [],
         tempProduct: {
+            title: '',
+            category: '',
+            content: '',
+            price: 0,
+            unit: '',
+            imageUrl: ['','','','',''],
         },
         status: {
             loadingItem: '',
@@ -102,9 +108,15 @@ new Vue({
                 });
             }
         },
-        openDetailModal(product, productimg) {
-            this.tempProduct = JSON.parse(JSON.stringify(product));
-            this.tempProduct.tempimg = productimg;
+        openDetailModal(product) {
+            this.tempProduct.title = product.title;
+            this.tempProduct.category = product.category;
+            this.tempProduct.content = product.content;
+            this.tempProduct.price = product.price;
+            this.tempProduct.unit = product.unit;
+            for (let index = 0; index < product.imageUrl.length; index++) {
+                this.tempProduct.imageUrl[index] = product.imageUrl[index];
+            }
             $('#productDetailModal').modal('show');
         },
         createOrder() {

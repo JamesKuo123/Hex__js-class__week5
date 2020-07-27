@@ -17,7 +17,7 @@ export default
                 <br>
                 Price: $ {{clickedproduct.price}} / {{clickedproduct.unit}}
                 <br>
-                <img :src="clickedproduct.imageUrl" alt="" class='modal__img'></img>
+                <img :src="clickedproduct.imageUrl[0]" alt="" class='modal__img'></img>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
