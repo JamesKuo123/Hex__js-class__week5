@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5</title>
+    <!-- font-family: 'Roboto', sans-serif; -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <!-- loading -->
+    <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
+    <!-- icon cdn-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="./style/all.css">
+</head>
+
+
+
+<body>
+    <div id="app">
+        <div class="container">
+            <loading :active.sync="isLoading"></loading>
+            <ul class="list">
+                <li class="list__item" v-for='product in this.products' :key='product.id'>
+                    <div class="card">
+                        <img :src="product.imageUrl[0]" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="card-title">{{product.title}}</h5>
+                            <p class="card-text">category: {{product.category}}</p>
+                            <p class="card-text">{{product.content}}</p>
+                            <p class="card-text origin_price">original price: ${{product.origin_price}} /
+                                {{product.unit}}</p>
+                            <p class="card-text price">on-sale price: ${{product.price}} / {{product.unit}}</p>
+                            <a href="#" class="btn btn-secondary"
+                                @click.prevent='openDetailModal(product,product.imageUrl[0])'>Product
+                                Info</a>
+                            <a href="#" class="btn btn-primary" @click.prevent='triggerCartFunction(product.id)'>Add to
+                                Cart</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="removeAll">
+                <a href="#" class="btn btn-danger" @click.prevent='clearCart'>Remove All</a>
+            </div>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Category</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Item Total</th>
+                        <th scope="col">Function</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for='(item,index) in this.cart' :key='index'>
+                        <td>{{item.product.category}}</td>
+                        <th>{{item.product.title}}</th>
+                        <td>
+                            <a href="#" class="btn material-icons"
+                                @click.prevent='triggerCartFunction(item.product.id,-1)'>remove</a>
+                            <span class="quantity">
+                                {{item.quantity}}
+                            </span>
+                            <a href="#" class="btn material-icons"
+                                @click.prevent='triggerCartFunction(item.product.id)'>add</a>
+                        </td>
+                        <td>{{item.product.unit}}</td>
+                        <td>{{item.product.price}}</td>
+                        <td>{{item.product.price * item.quantity}}</td>
+                        <td><a href="#" class="btn btn-secondary material-icons"
+                                @click.prevent='triggerCartFunction(item.product.id,-(item.quantity))'>delete</a></td>
+                    </tr>
+                    <tr>
+                        <th colspan="7" class="cart__totalPrice">Total: ${{this.cartTotal}}</th>
+                    </tr>
+                </tbody>
+            </table>
+            <validation-observer v-slot="{ invalid }" class="col-md-6">
+                <form @submit.prevent="createOrder" class="form">
+                    <div class="form-group">
+                        <validation-provider v-slot="{ errors, classes }" rules="required">
+                            <label for="username">Name</label>
+                            <input id="username" v-model="form.name" type="text" class="form-control" :class="classes">
+                            <span v-if="errors[0]" class="text-danger">{{ errors[0] }}</span>
+                        </validation-provider>
+                    </div>
+                    <div class="form-group">
+                        <validation-provider v-slot="{ errors, classes }" rules="required">
+                            <label for="email">Email</label>
+                            <input id="email" v-model="form.email" type="email" class="form-control" :class="classes">
+                            <span v-if="errors[0]" class="text-danger">{{ errors[0] }}</span>
+                        </validation-provider>
+                    </div>
+                    <div class="form-group">
+                        <validation-provider v-slot="{ errors, classes }" rules="required|min:8">
+                            <label for="tel">Phone</label>
+                            <input id="tel" v-model="form.tel" type="tel" class="form-control" :class="classes">
+                            <span v-if="errors[0]" class="text-danger">{{ errors[0] }}</span>
+                        </validation-provider>
+                    </div>
+                    <div class="form-group">
+                        <validation-provider v-slot="{ errors, classes }" rules="required">
+                            <label for="address">Address</label>
+                            <input id="address" v-model="form.address" type="text" class="form-control"
+                                :class="classes">
+                            <span v-if="errors[0]" class="text-danger">{{ errors[0] }}</span>
+                        </validation-provider>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Payment</label>
+                        <select v-model="form.payment" class="form-control" required>
+                            <option value="" disabled>
+                                Select a payment...
+                            </option>
+                            <option value="WebATM">
+                                WebATM
+                            </option>
+                            <option value="ATM">
+                                ATM
+                            </option>
+                            <option value="CVS">
+                                CVS
+                            </option>
+                            <option value="Barcode">
+                                Barcode
+                            </option>
+                            <option value="Credit">
+                                Credit
+                            </option>
+                            <option value="ApplePay">
+                                ApplePay
+                            </option>
+                            <option value="GooglePay">
+                                GooglePay
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" v-model="form.message" class="form-control" cols="30" rows="3">
+                  </textarea>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary" :disabled="invalid">
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </validation-observer>
+            <product-info-modal :clickedproduct='this.tempProduct'></product-info-modal>
+        </div>
+    </div>
+
+    <!-- BS4 -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+        </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+        </script>
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- Vue-loading -->
+    <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
+    <!-- Vue-loading Preparation -->
+    <script type="module">
+        // 掛載 Vue-Loading 套件
+        Vue.use(VueLoading);
+        // 全域註冊 VueLoading 並標籤設定為 loading
+        Vue.component('loading', VueLoading);
+    </script>
+    <!-- VeeValidate Full cdn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vee-validate/3.3.0/vee-validate.full.min.js"></script>
+    <!-- VeeValidate Preparation -->
+    <script type="module">
+        import zh from './js/zh_TW.js';
+        VeeValidate.localize('tw', zh);
+
+        VeeValidate.configure({
+            classes: {
+                valid: 'is-valid',
+                invalid: 'is-invalid',
+            },
+        });
+    </script>
+    <!-- VeeValidate validationProvider -->
+    <script type="module">
+        Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
+    </script>
+    <!-- VeeValidate validationObserver -->
+    <script type="module">
+        Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
+    </script>
+    <!-- vue component productInfo -->
+    <script type="module">
+        import productInfo from './js/productInfo.js';
+        Vue.component('product-info-modal', productInfo);
+    </script>
+    <!-- #app -->
+    <script type="module" src="./js/all.js"></script>
+</body>
+
+</html>
+
+
+
+
+<!-- 
+// {
+//     "id": "zvEyZQna0xHdX3NPqNSU01SGgFGaNHXDLS66kO4IXUqT5toSOvIsHq38QtPEKbGL",
+//     "title": "asd",
+//     "category": "asd",
+//     "content": "qwe",
+//     "imageUrl": [
+//       "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80"
+//     ],
+//     "enabled": true,
+//     "origin_price": 5235,
+//     "price": 235235,
+//     "unit": "asd"
+//   }, -->

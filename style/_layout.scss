@@ -1,0 +1,57 @@
+ul,li{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.list{
+    margin-top: 72px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    &__item{
+        width: 25%;
+        margin-right: 16px;
+        margin-bottom: 24px;
+        img{
+            height: 280px;
+            object-fit: cover;
+        }
+        .origin_price{
+            text-align: right;
+            text-decoration: line-through;
+        }
+        .price{
+            text-align: right;
+        }
+    }
+}
+
+th,td{
+    text-align: center;
+}
+
+.cart__totalPrice{
+    text-align: right;
+}
+
+.form{
+    width: 50%;
+    margin: 0 auto;
+}
+
+.quantity{
+    margin: 0 16px;
+}
+
+.removeAll{
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.modal__img{
+    width: 60%;
+    object-fit: cover;
+    margin-top: 24px;
+}
